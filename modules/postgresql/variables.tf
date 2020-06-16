@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+variable "create" {
+  type        = bool
+  description = "Whether or not to create the configuration"
+  default     = true
+}
+
 variable "project_id" {
   type        = string
   description = "The project ID to manage the Cloud SQL resources"
