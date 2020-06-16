@@ -26,7 +26,7 @@ resource "google_sql_database_instance" "replicas" {
   name                 = "${local.master_instance_name}-replica${var.read_replica_name_suffix}${each.value.name}"
   database_version     = var.database_version
   region               = join("-", slice(split("-", lookup(each.value, "zone", var.zone)), 0, 2))
-  master_instance_name = google_sql_database_instance.default.name
+  master_instance_name = google_sql_database_instance.default[0].name
 
   replica_configuration {
     failover_target = false
