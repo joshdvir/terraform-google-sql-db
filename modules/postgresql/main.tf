@@ -115,6 +115,7 @@ resource "google_sql_database_instance" "default" {
 }
 
 resource "google_sql_database" "default" {
+  count      = var.create ? 1 : 0
   name       = var.db_name
   project    = var.project_id
   instance   = google_sql_database_instance.default[0].name
@@ -134,6 +135,7 @@ resource "google_sql_database" "additional_databases" {
 }
 
 resource "random_id" "user-password" {
+  count   = var.create ? 1 : 0
   keepers = {
     name = google_sql_database_instance.default[0].name
   }
@@ -143,6 +145,7 @@ resource "random_id" "user-password" {
 }
 
 resource "google_sql_user" "default" {
+  count      = var.create ? 1 : 0
   name       = var.user_name
   project    = var.project_id
   instance   = google_sql_database_instance.default[0].name
