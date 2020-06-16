@@ -117,10 +117,10 @@ resource "google_sql_database_instance" "default" {
 resource "google_sql_database" "default" {
   name       = var.db_name
   project    = var.project_id
-  instance   = google_sql_database_instance.default.name
+  instance   = google_sql_database_instance.default[count.index].name
   charset    = var.db_charset
   collation  = var.db_collation
-  depends_on = [null_resource.module_depends_on, google_sql_database_instance.default]
+  depends_on = [null_resource.module_depends_on, google_sql_database_instance.default[count.index]]
 }
 
 resource "google_sql_database" "additional_databases" {
@@ -129,25 +129,25 @@ resource "google_sql_database" "additional_databases" {
   name       = each.value.name
   charset    = lookup(each.value, "charset", null)
   collation  = lookup(each.value, "collation", null)
-  instance   = google_sql_database_instance.default.name
-  depends_on = [null_resource.module_depends_on, google_sql_database_instance.default]
+  instance   = google_sql_database_instance.default[count.index].name
+  depends_on = [null_resource.module_depends_on, google_sql_database_instance.default[count.index]]
 }
 
 resource "random_id" "user-password" {
   keepers = {
-    name = google_sql_database_instance.default.name
+    name = google_sql_database_instance.default[count.index].name
   }
 
   byte_length = 8
-  depends_on  = [null_resource.module_depends_on, google_sql_database_instance.default]
+  depends_on  = [null_resource.module_depends_on, google_sql_database_instance.default[count.index]]
 }
 
 resource "google_sql_user" "default" {
   name       = var.user_name
   project    = var.project_id
-  instance   = google_sql_database_instance.default.name
+  instance   = google_sql_database_instance.default[count.index].name
   password   = var.user_password == "" ? random_id.user-password.hex : var.user_password
-  depends_on = [null_resource.module_depends_on, google_sql_database_instance.default]
+  depends_on = [null_resource.module_depends_on, google_sql_database_instance.default[count.index]]
 }
 
 resource "google_sql_user" "additional_users" {
@@ -155,8 +155,8 @@ resource "google_sql_user" "additional_users" {
   project    = var.project_id
   name       = each.value.name
   password   = lookup(each.value, "password", random_id.user-password.hex)
-  instance   = google_sql_database_instance.default.name
-  depends_on = [null_resource.module_depends_on, google_sql_database_instance.default]
+  instance   = google_sql_database_instance.default[count.index].name
+  depends_on = [null_resource.module_depends_on, google_sql_database_instance.default[count.index]]
 }
 
 resource "null_resource" "module_depends_on" {
