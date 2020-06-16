@@ -149,7 +149,7 @@ resource "google_sql_user" "default" {
   name       = var.user_name
   project    = var.project_id
   instance   = google_sql_database_instance.default[0].name
-  password   = var.user_password == "" ? random_id.user-password.hex : var.user_password
+  password   = var.user_password == "" ? random_id.user-password[0].hex : var.user_password
   depends_on = [null_resource.module_depends_on, google_sql_database_instance.default]
 }
 
@@ -157,7 +157,7 @@ resource "google_sql_user" "additional_users" {
   for_each   = local.users
   project    = var.project_id
   name       = each.value.name
-  password   = lookup(each.value, "password", random_id.user-password.hex)
+  password   = lookup(each.value, "password", random_id.user-password[0].hex)
   instance   = google_sql_database_instance.default[0].name
   depends_on = [null_resource.module_depends_on, google_sql_database_instance.default]
 }

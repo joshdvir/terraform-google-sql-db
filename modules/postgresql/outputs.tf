@@ -93,6 +93,6 @@ output "read_replica_instance_names" {
 
 output "generated_user_password" {
   description = "The auto generated default user password if not input password was provided"
-  value       = random_id.user-password.hex
+  value       = random_id.user-password[0].hex
   sensitive   = true
 }
