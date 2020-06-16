@@ -35,6 +35,7 @@ resource "random_id" "suffix" {
 }
 
 resource "google_sql_database_instance" "default" {
+  count               = var.create ? 1 : 0
   provider            = google-beta
   project             = var.project_id
   name                = local.master_instance_name
